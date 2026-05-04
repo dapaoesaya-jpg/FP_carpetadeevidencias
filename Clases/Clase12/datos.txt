@@ -1,0 +1,4 @@
+Pedro 18 0
+Juan  20 1
+Dana  19 0
+Nat.  20  1
