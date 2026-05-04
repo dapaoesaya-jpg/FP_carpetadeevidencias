@@ -1,165 +1,151 @@
 #include <stdio.h>
 #include <stdbool.h>
-#include <math.h>
 #include <stdlib.h>
+
 #define MAX 100
-int leer(int A[][MAX], int fa, int ca)
+
+void leer(int A[][MAX], int *fa, int *ca)
 {
-    printf("Ingresar el número de rengloes y columnas:\n");
-    scanf("%d %d", &fa, &ca);
-    for (int i = 0; i < fa; i++)
+    printf("Ingresar el número de renglones y columnas:\n");
+    scanf("%d %d", fa, ca);
+
+    for (int i = 0; i < *fa; i++)
     {
-        for (int j = 0; j < ca; j++)
+        for (int j = 0; j < *ca; j++)
         {
             printf("Ingresar el valor para matriz [%d,%d]: ", i, j);
             scanf("%d", &A[i][j]);
         }
     }
-    return 0;
 }
 
-int suma(int A[][MAX], int B[][MAX], int C[][MAX], int fb, int cb)
+void suma(int A[][MAX], int B[][MAX], int C[][MAX], int f, int c)
 {
-    for (int i = 0; i < fb; i++)
-    {
-        for (int j = 0; j < cb; j++)
-        {
+    for (int i = 0; i < f; i++)
+        for (int j = 0; j < c; j++)
             C[i][j] = A[i][j] + B[i][j];
-        }
-    }
-    return 0;
 }
-int mul(int A[][MAX], int B[][MAX], int C[][MAX], int fb, int cb, int v)
+
+void mul(int A[][MAX], int B[][MAX], int C[][MAX], int f, int c, int v)
 {
-    for (int i = 0; i < fb; i++)
+    for (int i = 0; i < f; i++)
     {
-        for (int j = 0; j < cb; j++)
+        for (int j = 0; j < c; j++)
         {
+            C[i][j] = 0; // 🔑 importante
             for (int k = 0; k < v; k++)
             {
-                printf("Ingresar el valor para matriz: ");
-                scanf("%d", &C[i][j]);
-                C[i][j] = C[i][j] + A[i][k] * B[k][j];
+                C[i][j] += A[i][k] * B[k][j];
             }
         }
     }
-    return 0;
 }
-void trans(int A[][MAX], int fa, int ca)
+
+void trans(int A[][MAX], int B[][MAX], int f, int c)
 {
-    for (int i = 0; i < fa; i++)
+    for (int i = 0; i < f; i++)
+        for (int j = 0; j < c; j++)
+            B[j][i] = A[i][j];
+}
+
+int deter(int A[][MAX], int n)
+{
+    int det = 1;
+
+    for (int i = 0; i < n; i++)
     {
-        for (int j = 0; j < ca; j++)
+        for (int j = i + 1; j < n; j++)
         {
-            scanf("%d", &A[j][i]);
+            if (A[i][i] == 0) return 0;
+
+            float factor = (float)A[j][i] / A[i][i];
+
+            for (int k = 0; k < n; k++)
+                A[j][k] -= factor * A[i][k];
         }
     }
-}
-int deter(int A[][MAX], int fa, int ca)
-{
-    float v, n;
-    int m = 1;
-    float det = 1;
-    for (int i = 0; i < fa; i++)
-    {
-        for (int j = i + 1; j < ca; j++)
-        {
-            v = A[j][i];
-            n = v / v;
-            for (int k = 0; k < fa; k++)
-            {
-                A[j][k] = A[j][k] - n * A[i][k];
-            }
-        }
-    }
-    for (int i = 0; i < fa; i++)
-    {
+
+    for (int i = 0; i < n; i++)
         det *= A[i][i];
-    }
+
     return det;
 }
-int mostrar(int A[][MAX], int fa, int ca)
+
+void mostrar(int A[][MAX], int f, int c)
 {
-    for (int i = 0; i < fa; i++)
+    for (int i = 0; i < f; i++)
     {
         printf("[ ");
-
-        for (int j = 0; j < ca; j++)
-        {
+        for (int j = 0; j < c; j++)
             printf("%d ", A[i][j]);
-        }
         printf("]\n");
     }
-    return 0;
 }
 
 void menu()
 {
     printf("Seleccionar opcion:\n");
     printf("1. Suma\n");
-    printf("2. Multiplicación:\n");
-    printf("3. Transpuesta:\n");
-    printf("4. Determinante:\n");
-    printf("5. Salir:\n");
+    printf("2. Multiplicación\n");
+    printf("3. Transpuesta\n");
+    printf("4. Determinante\n");
+    printf("5. Salir\n");
 }
+
 int main()
 {
-    int matriza[MAX][MAX], matrizb[MAX][MAX], matriz[MAX][MAX];
-    int fb, cb, fa, ca, fc, cc,v;
-    float a, b, c;
+    int A[MAX][MAX], B[MAX][MAX], C[MAX][MAX];
+    int fa, ca, fb, cb;
     int op;
+
     while (true)
     {
         menu();
-        printf("Selecciona una opción \n");
         scanf("%d", &op);
-        if (op == 5)
-            return 0;
+
+        if (op == 5) break;
+
         switch (op)
         {
         case 1:
-            leer(matriza, fa, ca);
-            leer(matrizb, fb, cb);
+            leer(A, &fa, &ca);
+            leer(B, &fb, &cb);
+
             if (fa == fb && ca == cb)
             {
-                suma(matriza, matriz, matriz, fa, ca);
+                suma(A, B, C, fa, ca);
+                mostrar(C, fa, ca);
             }
             else
-            {
-                printf("la matriz no se puede sumar\n");
-            }
-            mostrar(matriz, fc,cc);
+                printf("No se pueden sumar\n");
             break;
+
         case 2:
-            leer(matriza, fb, cb);
-            leer(matrizb, fa, ca);
-            if (fa == cb)
+            leer(A, &fa, &ca);
+            leer(B, &fb, &cb);
+
+            if (ca == fb)
             {
-                mul(matriza, matrizb, matriz, fa, ca, v);
+                mul(A, B, C, fa, cb, ca);
+                mostrar(C, fa, cb);
             }
             else
-            {
-                printf("la matriz no se puede multiplicacar\n");
-            }
-            mostrar(matriz, fc,cc);
+                printf("No se pueden multiplicar\n");
             break;
+
         case 3:
-            leer(matriz, fa,ca);
-            trans(matriz, fa, ca);
-            mostrar(matriz, fc,cc);
+            leer(A, &fa, &ca);
+            trans(A, C, fa, ca);
+            mostrar(C, ca, fa);
             break;
+
         case 4:
-            leer(matriza, fa, ca);
+            leer(A, &fa, &ca);
             if (fa == ca)
-            {
-                deter(matriza, fa, ca);
-            }
+                printf("Determinante: %d\n", deter(A, fa));
             else
-            {
-                printf("No tiene determinate\n");
-            }
+                printf("No tiene determinante\n");
             break;
-        default:
         }
     }
 }
