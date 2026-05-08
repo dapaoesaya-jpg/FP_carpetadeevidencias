@@ -1,0 +1,4 @@
+Lavadora 15000
+Refrigerador 20000
+Planca     500
+Licuadora 3000

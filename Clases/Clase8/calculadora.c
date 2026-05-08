@@ -60,7 +60,7 @@ int main (){
             default:
             printf ("Opción no valida\n");
         }
-        printf ("Presione ENter para continuar...");
+        printf ("Presione Enter para continuar...");
         while(getchar()!='\n');
         getchar();
         system("clear");
